@@ -6,114 +6,19 @@ const path = require('path');
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, './'))); // Serve o HTML
+app.use(express.static(path.join(__dirname, './')));
+
+// Lê a string de conexão da variável de ambiente
+const MONGODB_URI = process.env.MONGODB_URI;
 
 // Conectar ao MongoDB
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://admin_processos:SUA_SENHA@cluster0.xxxxx.mongodb.net/processos';
-
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
+}).then(() => {
+  console.log('Conectado ao MongoDB com sucesso!');
+}).catch(err => {
+  console.error('Erro ao conectar ao MongoDB:', err);
 });
 
-// Esquemas do MongoDB
-const UsuarioSchema = new mongoose.Schema({
-  id: Number,
-  nome: String,
-  username: { type: String, unique: true },
-  senha: String,
-  tipo: String,
-  cor: String
-});
-
-const ProcessoSchema = new mongoose.Schema({
-  id: { type: Number, unique: true },
-  numero: String,
-  titulo: String,
-  requerente: String,
-  dataChegada: String,
-  origem: String,
-  prioridade: String,
-  prazo: String,
-  observacao: String,
-  status: String,
-  responsavel: Number,
-  dataDespacho: String,
-  despachadoPara: String
-});
-
-const Usuario = mongoose.model('Usuario', UsuarioSchema);
-const Processo = mongoose.model('Processo', ProcessoSchema);
-
-// --- ROTAS DA API ---
-
-// Carregar dados iniciais
-app.get('/api/dados', async (req, res) => {
-  try {
-    const usuarios = await Usuario.find();
-    const processos = await Processo.find();
-    res.json({ usuarios, processos });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Salvar usuários
-app.post('/api/usuarios', async (req, res) => {
-  try {
-    const { usuarios } = req.body;
-    
-    // Limpar e recriar (simplificado - em produção use upsert)
-    await Usuario.deleteMany({});
-    await Usuario.insertMany(usuarios);
-    
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Salvar processos
-app.post('/api/processos', async (req, res) => {
-  try {
-    const { processos } = req.body;
-    
-    await Processo.deleteMany({});
-    await Processo.insertMany(processos);
-    
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Adicionar/atualizar um processo individual (para operações em tempo real)
-app.post('/api/processo', async (req, res) => {
-  try {
-    const processo = req.body;
-    await Processo.findOneAndUpdate(
-      { id: processo.id },
-      processo,
-      { upsert: true, new: true }
-    );
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Remover processo
-app.delete('/api/processo/:id', async (req, res) => {
-  try {
-    await Processo.deleteOne({ id: parseInt(req.params.id) });
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+// ... resto do código ...

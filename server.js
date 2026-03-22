@@ -8,19 +8,18 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './')));
 
-// 🔧 STRING FIXA - CONEXÃO DIRETA
-const MONGODB_URI = 'mongodb+srv://tiagoabreuenge_db_user:S1gpoc%40207042@tiagocluster.wi6sszn.mongodb.net/workspacepro?retryWrites=true&w=majority&appName=TiagoCluster';
+// 🔧 STRING CORRETA - Usando o banco "projetos"
+const MONGODB_URI = 'mongodb+srv://tiagoabreuenge_db_user:S1gpoc%40207042@tiagocluster.wi6sszn.mongodb.net/projetos?retryWrites=true&w=majority&appName=TiagoCluster';
 
 console.log('🚀 Servidor Workspace Pro iniciando...');
-console.log('🔌 MONGODB_URI definida:', MONGODB_URI ? '✅ SIM' : '❌ NÃO');
+console.log('🔌 MONGODB_URI:', MONGODB_URI ? '✅ DEFINIDA' : '❌ NÃO');
 
 // ROTA DE TESTE
 app.get('/ping', (req, res) => {
   res.json({ 
     status: 'ok', 
     message: 'pong',
-    timestamp: new Date().toISOString(),
-    db_connected: mongoose.connection.readyState === 1
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -55,7 +54,7 @@ db.once('open', () => {
 function setupModelsAndRoutes() {
   console.log('📊 Configurando modelos e rotas...');
   
-  // Esquemas do MongoDB
+  // Esquemas do MongoDB (com os nomes das coleções existentes)
   const EquipeSchema = new mongoose.Schema({
     id: { type: String, unique: true },
     username: String,
@@ -89,8 +88,9 @@ function setupModelsAndRoutes() {
     }]
   });
 
-  const Equipe = mongoose.model('Equipe', EquipeSchema);
-  const Board = mongoose.model('Board', BoardSchema);
+  // Usando as coleções existentes: "usuarios" e "projetos"
+  const Equipe = mongoose.model('Equipe', EquipeSchema, 'usuarios');
+  const Board = mongoose.model('Board', BoardSchema, 'projetos');
 
   // --- ROTAS DA API ---
 
@@ -182,5 +182,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Servidor rodando na porta ${PORT}`);
   console.log(`🌐 Acesse: http://localhost:${PORT}`);
-  console.log(`🔍 Teste: http://localhost:${PORT}/ping`);
 });

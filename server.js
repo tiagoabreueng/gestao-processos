@@ -8,14 +8,21 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './')));
 
-// STRING DE CONEXÃO CORRETA
-const MONGODB_URI = 'mongodb+srv://tiagoabreuenge_db_user:S1gpoc%40207042@tiagocluster.wi6sszn.mongodb.net/projetos?retryWrites=true&w=majority&appName=TiagoCluster';
+// 🔧 FIXO - CONEXÃO DIRETA (remova depois que o Railway funcionar)
+const MONGODB_URI = 'mongodb+srv://admin_processos:Esgr-207042@gestaoprocessos.ciymuyb.mongodb.net/processos?retryWrites=true&w=majority&appName=gestaoprocessos';
 
-console.log('🚀 Servidor Workspace Pro iniciando...');
+console.log('🚀 Servidor iniciando...');
+console.log('📁 Diretório atual:', __dirname);
+console.log('🔌 MONGODB_URI:', MONGODB_URI ? '✅ DEFINIDA' : '❌ NÃO DEFINIDA');
 
 // ROTA DE TESTE
 app.get('/ping', (req, res) => {
-  res.json({ status: 'ok', message: 'pong', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    message: 'pong',
+    timestamp: new Date().toISOString(),
+    mongodb_uri: MONGODB_URI ? 'definida' : 'indefinida'
+  });
 });
 
 // ROTA PRINCIPAL
@@ -24,7 +31,7 @@ app.get('/', (req, res) => {
 });
 
 // CONEXÃO COM MONGODB
-console.log('🔄 Conectando ao MongoDB...');
+console.log('🔄 Tentando conectar ao MongoDB...');
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
@@ -34,140 +41,128 @@ mongoose.connect(MONGODB_URI, {
 const db = mongoose.connection;
 
 db.on('error', (err) => {
-  console.error('❌ Erro ao conectar:', err.message);
+  console.error('❌ Erro ao conectar ao MongoDB:', err.message);
 });
 
-db.once('open', async () => {
-  console.log('✅ Conectado ao MongoDB!');
-  console.log('📊 Banco de dados:', db.db.databaseName);
+db.once('open', () => {
+  console.log('✅ Conectado ao MongoDB com sucesso!');
+  console.log('📊 Banco de dados:', db.name);
   
-  // Listar coleções para debug
-  const collections = await db.db.listCollections().toArray();
-  console.log('📁 Coleções disponíveis:', collections.map(c => c.name));
-  
+  // Configurar modelos e rotas APÓS conectar
   setupModelsAndRoutes();
 });
 
+// Função para configurar modelos e rotas
 function setupModelsAndRoutes() {
-  // ESQUEMAS - USANDO OS NOMES CORRETOS DAS COLEÇÕES
+  console.log('📊 Configurando modelos e rotas...');
+  
+  // Esquemas do MongoDB
   const UsuarioSchema = new mongoose.Schema({
-    id: String,
-    username: String,
-    name: String,
-    password: String,
-    color: String,
-    role: String,
-    email: String,
-    phone: String,
-    cargo: String,
-    type: String,
-    firstAccess: Boolean
-  });
-
-  const ProjetoSchema = new mongoose.Schema({
     id: Number,
-    name: String,
-    managerId: String,
-    groups: [{
-      id: String,
-      name: String,
-      color: String,
-      tasks: [{
-        id: String,
-        title: String,
-        ownerId: String,
-        status: String,
-        priority: String,
-        timeline: [String]
-      }]
-    }]
+    nome: String,
+    username: { type: String, unique: true },
+    senha: String,
+    tipo: String,
+    cor: String
   });
 
-  // IMPORTANTE: Forçar os nomes das coleções existentes
-  const Usuario = mongoose.model('Usuario', UsuarioSchema, 'usuarios');
-  const Projeto = mongoose.model('Projeto', ProjetoSchema, 'projetos');
+  const ProcessoSchema = new mongoose.Schema({
+    id: { type: Number, unique: true },
+    numero: String,
+    titulo: String,
+    requerente: String,
+    dataChegada: String,
+    origem: String,
+    prioridade: String,
+    prazo: String,
+    observacao: String,
+    status: String,
+    responsavel: Number,
+    dataDespacho: String,
+    despachadoPara: String
+  });
 
-  // ROTA PARA CARREGAR DADOS
+  const Usuario = mongoose.model('Usuario', UsuarioSchema);
+  const Processo = mongoose.model('Processo', ProcessoSchema);
+
+  // --- ROTAS DA API ---
+
+  // Carregar dados
   app.get('/api/dados', async (req, res) => {
     console.log('📥 GET /api/dados');
     
     try {
       const usuarios = await Usuario.find();
-      const projetos = await Projeto.find();
-      console.log(`✅ Encontrados: ${usuarios.length} usuários, ${projetos.length} projetos`);
-      
-      // Log dos primeiros para debug
-      if (usuarios.length > 0) console.log('👤 Primeiro usuário:', usuarios[0].name);
-      if (projetos.length > 0) console.log('📋 Primeiro projeto:', projetos[0].name);
-      
-      res.json({ team: usuarios, boards: projetos });
+      const processos = await Processo.find();
+      console.log(`✅ Retornando ${usuarios.length} usuários e ${processos.length} processos`);
+      res.json({ usuarios, processos });
     } catch (error) {
       console.error('❌ Erro ao buscar dados:', error.message);
       res.status(500).json({ error: error.message });
     }
   });
 
-  // ROTA PARA SALVAR EQUIPE
-  app.post('/api/equipe', async (req, res) => {
-    console.log('📥 POST /api/equipe');
+  // Salvar usuários
+  app.post('/api/usuarios', async (req, res) => {
+    console.log('📥 POST /api/usuarios');
     
     try {
-      const { team } = req.body;
+      const { usuarios } = req.body;
       await Usuario.deleteMany({});
-      await Usuario.insertMany(team);
-      console.log(`✅ ${team.length} usuários salvos`);
+      await Usuario.insertMany(usuarios);
+      console.log(`✅ ${usuarios.length} usuários salvos`);
       res.json({ success: true });
     } catch (error) {
-      console.error('❌ Erro:', error.message);
+      console.error('❌ Erro ao salvar usuários:', error.message);
       res.status(500).json({ error: error.message });
     }
   });
 
-  // ROTA PARA SALVAR PROJETOS
-  app.post('/api/boards', async (req, res) => {
-    console.log('📥 POST /api/boards');
+  // Salvar processos
+  app.post('/api/processos', async (req, res) => {
+    console.log('📥 POST /api/processos');
     
     try {
-      const { boards } = req.body;
-      await Projeto.deleteMany({});
-      await Projeto.insertMany(boards);
-      console.log(`✅ ${boards.length} projetos salvos`);
+      const { processos } = req.body;
+      await Processo.deleteMany({});
+      await Processo.insertMany(processos);
+      console.log(`✅ ${processos.length} processos salvos`);
       res.json({ success: true });
     } catch (error) {
-      console.error('❌ Erro:', error.message);
+      console.error('❌ Erro ao salvar processos:', error.message);
       res.status(500).json({ error: error.message });
     }
   });
 
-  // ROTA PARA SALVAR PROJETO INDIVIDUAL
-  app.post('/api/board', async (req, res) => {
-    console.log('📥 POST /api/board');
+  // Adicionar/atualizar um processo
+  app.post('/api/processo', async (req, res) => {
+    console.log('📥 POST /api/processo');
     
     try {
-      const board = req.body;
-      await Projeto.findOneAndUpdate(
-        { id: board.id },
-        board,
+      const processo = req.body;
+      await Processo.findOneAndUpdate(
+        { id: processo.id },
+        processo,
         { upsert: true, new: true }
       );
-      console.log(`✅ Projeto ${board.name} salvo`);
+      console.log(`✅ Processo ${processo.numero} salvo`);
       res.json({ success: true });
     } catch (error) {
-      console.error('❌ Erro:', error.message);
+      console.error('❌ Erro ao salvar processo:', error.message);
       res.status(500).json({ error: error.message });
     }
   });
 
-  // ROTA PARA REMOVER PROJETO
-  app.delete('/api/board/:id', async (req, res) => {
-    console.log('📥 DELETE /api/board');
+  // Remover processo
+  app.delete('/api/processo/:id', async (req, res) => {
+    console.log('📥 DELETE /api/processo');
     
     try {
-      await Projeto.deleteOne({ id: parseInt(req.params.id) });
-      console.log(`✅ Projeto ${req.params.id} removido`);
+      await Processo.deleteOne({ id: parseInt(req.params.id) });
+      console.log(`✅ Processo ${req.params.id} removido`);
       res.json({ success: true });
     } catch (error) {
-      console.error('❌ Erro:', error.message);
+      console.error('❌ Erro ao deletar processo:', error.message);
       res.status(500).json({ error: error.message });
     }
   });
@@ -175,7 +170,10 @@ function setupModelsAndRoutes() {
   console.log('✅ Rotas configuradas com sucesso!');
 }
 
+// Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Servidor rodando na porta ${PORT}`);
+  console.log(`🌐 Acesse: http://localhost:${PORT}`);
+  console.log(`🔍 Teste: http://localhost:${PORT}/ping`);
 });

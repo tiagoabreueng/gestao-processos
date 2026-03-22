@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './')));
 
-// STRING DE CONEXÃO
+// STRING DE CONEXÃO CORRETA
 const MONGODB_URI = 'mongodb+srv://tiagoabreuenge_db_user:S1gpoc%40207042@tiagocluster.wi6sszn.mongodb.net/projetos?retryWrites=true&w=majority&appName=TiagoCluster';
 
 console.log('🚀 Servidor Workspace Pro iniciando...');
@@ -16,32 +16,6 @@ console.log('🚀 Servidor Workspace Pro iniciando...');
 // ROTA DE TESTE
 app.get('/ping', (req, res) => {
   res.json({ status: 'ok', message: 'pong', timestamp: new Date().toISOString() });
-});
-
-// ROTA PARA VERIFICAR DADOS DIRETAMENTE
-app.get('/api/check', async (req, res) => {
-  try {
-    if (mongoose.connection.readyState !== 1) {
-      return res.json({ connected: false, message: 'MongoDB não conectado' });
-    }
-    const db = mongoose.connection.db;
-    const usuarios = await db.collection('usuarios').countDocuments();
-    const projetos = await db.collection('projetos').countDocuments();
-    
-    // Buscar um exemplo de cada para verificar
-    const primeiroUsuario = await db.collection('usuarios').findOne();
-    const primeiroProjeto = await db.collection('projetos').findOne();
-    
-    res.json({ 
-      connected: true, 
-      usuarios_count: usuarios,
-      projetos_count: projetos,
-      exemplo_usuario: primeiroUsuario ? { id: primeiroUsuario.id, name: primeiroUsuario.name } : null,
-      exemplo_projeto: primeiroProjeto ? { id: primeiroProjeto.id, name: primeiroProjeto.name } : null
-    });
-  } catch (error) {
-    res.json({ error: error.message });
-  }
 });
 
 // ROTA PRINCIPAL
@@ -57,25 +31,25 @@ mongoose.connect(MONGODB_URI, {
   useUnifiedTopology: true
 });
 
-const dbConnection = mongoose.connection;
+const db = mongoose.connection;
 
-dbConnection.on('error', (err) => {
+db.on('error', (err) => {
   console.error('❌ Erro ao conectar:', err.message);
 });
 
-dbConnection.once('open', async () => {
+db.once('open', async () => {
   console.log('✅ Conectado ao MongoDB!');
-  console.log('📊 Banco de dados:', dbConnection.db.databaseName);
+  console.log('📊 Banco de dados:', db.db.databaseName);
   
-  // Verificar as coleções disponíveis
-  const collections = await dbConnection.db.listCollections().toArray();
+  // Listar coleções para debug
+  const collections = await db.db.listCollections().toArray();
   console.log('📁 Coleções disponíveis:', collections.map(c => c.name));
   
   setupModelsAndRoutes();
 });
 
 function setupModelsAndRoutes() {
-  // ESQUEMAS
+  // ESQUEMAS - USANDO OS NOMES CORRETOS DAS COLEÇÕES
   const UsuarioSchema = new mongoose.Schema({
     id: String,
     username: String,
@@ -88,7 +62,7 @@ function setupModelsAndRoutes() {
     cargo: String,
     type: String,
     firstAccess: Boolean
-  }, { collection: 'usuarios' }); // Força o nome da coleção
+  });
 
   const ProjetoSchema = new mongoose.Schema({
     id: Number,
@@ -107,10 +81,11 @@ function setupModelsAndRoutes() {
         timeline: [String]
       }]
     }]
-  }, { collection: 'projetos' }); // Força o nome da coleção
+  });
 
-  const Usuario = mongoose.model('Usuario', UsuarioSchema);
-  const Projeto = mongoose.model('Projeto', ProjetoSchema);
+  // IMPORTANTE: Forçar os nomes das coleções existentes
+  const Usuario = mongoose.model('Usuario', UsuarioSchema, 'usuarios');
+  const Projeto = mongoose.model('Projeto', ProjetoSchema, 'projetos');
 
   // ROTA PARA CARREGAR DADOS
   app.get('/api/dados', async (req, res) => {
@@ -120,6 +95,11 @@ function setupModelsAndRoutes() {
       const usuarios = await Usuario.find();
       const projetos = await Projeto.find();
       console.log(`✅ Encontrados: ${usuarios.length} usuários, ${projetos.length} projetos`);
+      
+      // Log dos primeiros para debug
+      if (usuarios.length > 0) console.log('👤 Primeiro usuário:', usuarios[0].name);
+      if (projetos.length > 0) console.log('📋 Primeiro projeto:', projetos[0].name);
+      
       res.json({ team: usuarios, boards: projetos });
     } catch (error) {
       console.error('❌ Erro ao buscar dados:', error.message);

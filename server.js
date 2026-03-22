@@ -8,12 +8,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './')));
 
-// 🔧 FIXO - CONEXÃO DIRETA (remova depois que o Railway funcionar)
-const MONGODB_URI = 'mongodb+srv://admin_processos:Esgr-207042@gestaoprocessos.ciymuyb.mongodb.net/processos?retryWrites=true&w=majority&appName=gestaoprocessos';
+// 🔧 STRING FIXA - CONEXÃO DIRETA
+const MONGODB_URI = 'mongodb+srv://tiagoabreuenge_db_user:S1gpoc%40207042@tiagocluster.wi6sszn.mongodb.net/workspacepro?retryWrites=true&w=majority&appName=TiagoCluster';
 
-console.log('🚀 Servidor iniciando...');
-console.log('📁 Diretório atual:', __dirname);
-console.log('🔌 MONGODB_URI:', MONGODB_URI ? '✅ DEFINIDA' : '❌ NÃO DEFINIDA');
+console.log('🚀 Servidor Workspace Pro iniciando...');
+console.log('🔌 MONGODB_URI definida:', MONGODB_URI ? '✅ SIM' : '❌ NÃO');
 
 // ROTA DE TESTE
 app.get('/ping', (req, res) => {
@@ -21,7 +20,7 @@ app.get('/ping', (req, res) => {
     status: 'ok', 
     message: 'pong',
     timestamp: new Date().toISOString(),
-    mongodb_uri: MONGODB_URI ? 'definida' : 'indefinida'
+    db_connected: mongoose.connection.readyState === 1
   });
 });
 
@@ -41,7 +40,7 @@ mongoose.connect(MONGODB_URI, {
 const db = mongoose.connection;
 
 db.on('error', (err) => {
-  console.error('❌ Erro ao conectar ao MongoDB:', err.message);
+  console.error('❌ Erro ao conectar:', err.message);
 });
 
 db.once('open', () => {
@@ -57,33 +56,41 @@ function setupModelsAndRoutes() {
   console.log('📊 Configurando modelos e rotas...');
   
   // Esquemas do MongoDB
-  const UsuarioSchema = new mongoose.Schema({
-    id: Number,
-    nome: String,
-    username: { type: String, unique: true },
-    senha: String,
-    tipo: String,
-    cor: String
+  const EquipeSchema = new mongoose.Schema({
+    id: { type: String, unique: true },
+    username: String,
+    name: String,
+    password: String,
+    color: String,
+    role: String,
+    email: String,
+    phone: String,
+    cargo: String,
+    type: String,
+    firstAccess: Boolean
   });
 
-  const ProcessoSchema = new mongoose.Schema({
+  const BoardSchema = new mongoose.Schema({
     id: { type: Number, unique: true },
-    numero: String,
-    titulo: String,
-    requerente: String,
-    dataChegada: String,
-    origem: String,
-    prioridade: String,
-    prazo: String,
-    observacao: String,
-    status: String,
-    responsavel: Number,
-    dataDespacho: String,
-    despachadoPara: String
+    name: String,
+    managerId: String,
+    groups: [{
+      id: String,
+      name: String,
+      color: String,
+      tasks: [{
+        id: String,
+        title: String,
+        ownerId: String,
+        status: String,
+        priority: String,
+        timeline: [String]
+      }]
+    }]
   });
 
-  const Usuario = mongoose.model('Usuario', UsuarioSchema);
-  const Processo = mongoose.model('Processo', ProcessoSchema);
+  const Equipe = mongoose.model('Equipe', EquipeSchema);
+  const Board = mongoose.model('Board', BoardSchema);
 
   // --- ROTAS DA API ---
 
@@ -92,77 +99,77 @@ function setupModelsAndRoutes() {
     console.log('📥 GET /api/dados');
     
     try {
-      const usuarios = await Usuario.find();
-      const processos = await Processo.find();
-      console.log(`✅ Retornando ${usuarios.length} usuários e ${processos.length} processos`);
-      res.json({ usuarios, processos });
+      const equipe = await Equipe.find();
+      const boards = await Board.find();
+      console.log(`✅ Retornando ${equipe.length} membros e ${boards.length} projetos`);
+      res.json({ team: equipe, boards: boards });
     } catch (error) {
       console.error('❌ Erro ao buscar dados:', error.message);
       res.status(500).json({ error: error.message });
     }
   });
 
-  // Salvar usuários
-  app.post('/api/usuarios', async (req, res) => {
-    console.log('📥 POST /api/usuarios');
+  // Salvar equipe
+  app.post('/api/equipe', async (req, res) => {
+    console.log('📥 POST /api/equipe');
     
     try {
-      const { usuarios } = req.body;
-      await Usuario.deleteMany({});
-      await Usuario.insertMany(usuarios);
-      console.log(`✅ ${usuarios.length} usuários salvos`);
+      const { team } = req.body;
+      await Equipe.deleteMany({});
+      await Equipe.insertMany(team);
+      console.log(`✅ ${team.length} membros salvos`);
       res.json({ success: true });
     } catch (error) {
-      console.error('❌ Erro ao salvar usuários:', error.message);
+      console.error('❌ Erro ao salvar equipe:', error.message);
       res.status(500).json({ error: error.message });
     }
   });
 
-  // Salvar processos
-  app.post('/api/processos', async (req, res) => {
-    console.log('📥 POST /api/processos');
+  // Salvar projetos
+  app.post('/api/boards', async (req, res) => {
+    console.log('📥 POST /api/boards');
     
     try {
-      const { processos } = req.body;
-      await Processo.deleteMany({});
-      await Processo.insertMany(processos);
-      console.log(`✅ ${processos.length} processos salvos`);
+      const { boards } = req.body;
+      await Board.deleteMany({});
+      await Board.insertMany(boards);
+      console.log(`✅ ${boards.length} projetos salvos`);
       res.json({ success: true });
     } catch (error) {
-      console.error('❌ Erro ao salvar processos:', error.message);
+      console.error('❌ Erro ao salvar projetos:', error.message);
       res.status(500).json({ error: error.message });
     }
   });
 
-  // Adicionar/atualizar um processo
-  app.post('/api/processo', async (req, res) => {
-    console.log('📥 POST /api/processo');
+  // Salvar/atualizar um projeto individual
+  app.post('/api/board', async (req, res) => {
+    console.log('📥 POST /api/board');
     
     try {
-      const processo = req.body;
-      await Processo.findOneAndUpdate(
-        { id: processo.id },
-        processo,
+      const board = req.body;
+      await Board.findOneAndUpdate(
+        { id: board.id },
+        board,
         { upsert: true, new: true }
       );
-      console.log(`✅ Processo ${processo.numero} salvo`);
+      console.log(`✅ Projeto ${board.name} salvo`);
       res.json({ success: true });
     } catch (error) {
-      console.error('❌ Erro ao salvar processo:', error.message);
+      console.error('❌ Erro ao salvar projeto:', error.message);
       res.status(500).json({ error: error.message });
     }
   });
 
-  // Remover processo
-  app.delete('/api/processo/:id', async (req, res) => {
-    console.log('📥 DELETE /api/processo');
+  // Remover projeto
+  app.delete('/api/board/:id', async (req, res) => {
+    console.log('📥 DELETE /api/board');
     
     try {
-      await Processo.deleteOne({ id: parseInt(req.params.id) });
-      console.log(`✅ Processo ${req.params.id} removido`);
+      await Board.deleteOne({ id: parseInt(req.params.id) });
+      console.log(`✅ Projeto ${req.params.id} removido`);
       res.json({ success: true });
     } catch (error) {
-      console.error('❌ Erro ao deletar processo:', error.message);
+      console.error('❌ Erro ao deletar projeto:', error.message);
       res.status(500).json({ error: error.message });
     }
   });

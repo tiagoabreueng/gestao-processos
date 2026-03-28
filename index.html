@@ -4,32 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
     <meta name="theme-color" content="#0073ea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Gestão de Processos - Secretaria</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Figtree', 'sans-serif'] },
-                    colors: {
-                        monday: {
-                            blue: '#0073ea',
-                            green: '#00ca72',
-                            red: '#fb275d',
-                            orange: '#ffad00',
-                            purple: '#a25ddc',
-                            gray: '#c4c4c4',
-                            bg: '#f5f6f8',
-                            dark: '#111122'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         /* Custom Scroll */
         .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -39,12 +16,7 @@
         .dark .custom-scroll::-webkit-scrollbar-thumb { background: #444; }
         
         /* Resizable Sidebar */
-        .resizable-container {
-            display: flex;
-            height: 100%;
-            position: relative;
-        }
-        
+        .resizable-container { display: flex; height: 100%; position: relative; }
         .sidebar-resizable {
             position: relative;
             min-width: 180px;
@@ -55,23 +27,15 @@
             height: 100%;
             overflow-y: auto;
         }
-        .dark .sidebar-resizable {
-            background: #181829;
-        }
+        .dark .sidebar-resizable { background: #181829; }
         
-        /* SIDEBAR FIXA NO DESKTOP - SEMPRE VISÍVEL */
+        /* Desktop: sidebar sempre visível */
         @media (min-width: 769px) {
-            .sidebar-resizable {
-                position: relative !important;
-                left: 0 !important;
-                display: flex !important;
-            }
-            .menu-toggle, .mobile-overlay, .bottom-nav {
-                display: none !important;
-            }
+            .sidebar-resizable { position: relative !important; left: 0 !important; display: flex !important; }
+            .menu-toggle, .mobile-overlay, .bottom-nav { display: none !important; }
         }
         
-        /* MOBILE: Sidebar colapsável */
+        /* Mobile: sidebar colapsável */
         @media (max-width: 768px) {
             .sidebar-resizable {
                 position: fixed;
@@ -82,38 +46,17 @@
                 transition: left 0.3s ease;
                 box-shadow: 4px 0 20px rgba(0,0,0,0.1);
             }
-            .sidebar-resizable.open {
-                left: 0;
-            }
-            .mobile-overlay {
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.5);
-                z-index: 999;
-                display: none;
-            }
-            .mobile-overlay.open {
-                display: block;
-            }
-            .menu-toggle {
-                display: block;
-                cursor: pointer;
-            }
-            .desktop-nav {
-                display: none;
-            }
-            .bottom-nav {
-                display: flex;
-            }
-            .process-card {
-                padding: 16px;
-            }
-            .resize-handle {
-                display: none;
-            }
+            .sidebar-resizable.open { left: 0; }
+            .mobile-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; display: none; }
+            .mobile-overlay.open { display: block; }
+            .menu-toggle { display: block; cursor: pointer; }
+            .desktop-nav { display: none; }
+            .bottom-nav { display: flex; }
+            .process-card { padding: 16px; }
+            .resize-handle { display: none; }
         }
         
-        /* Bottom Navigation (mobile) */
+        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -123,15 +66,11 @@
             border-top: 1px solid #e2e8f0;
             z-index: 100;
             padding: 8px 16px;
-            padding-bottom: env(safe-area-inset-bottom);
             justify-content: space-around;
             align-items: center;
             display: none;
         }
-        .dark .bottom-nav {
-            background: #181829;
-            border-color: #2d2d3f;
-        }
+        .dark .bottom-nav { background: #181829; border-color: #2d2d3f; }
         .bottom-nav-item {
             display: flex;
             flex-direction: column;
@@ -140,26 +79,11 @@
             border-radius: 30px;
             min-width: 60px;
             color: #64748b;
-            background: transparent;
         }
-        .dark .bottom-nav-item {
-            color: #94a3b8;
-        }
-        .bottom-nav-item.active {
-            background: #e6f0ff;
-            color: #0073ea;
-        }
-        .dark .bottom-nav-item.active {
-            background: #1e293b;
-            color: #60a5fa;
-        }
-        .bottom-nav-item span:first-child {
-            font-size: 22px;
-        }
-        .bottom-nav-item span:last-child {
-            font-size: 10px;
-            font-weight: 600;
-        }
+        .dark .bottom-nav-item { color: #94a3b8; }
+        .bottom-nav-item.active { background: #e6f0ff; color: #0073ea; }
+        .bottom-nav-item span:first-child { font-size: 22px; }
+        .bottom-nav-item span:last-child { font-size: 10px; font-weight: 600; }
         
         /* Cards */
         .process-card {
@@ -172,73 +96,24 @@
             display: flex;
             flex-direction: column;
         }
-        .dark .process-card {
-            background: #181829;
-            border-color: #2d2d3f;
-        }
-        .process-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
+        .dark .process-card { background: #181829; border-color: #2d2d3f; }
+        .process-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
         
         /* Grid responsivo */
-        .processos-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-        @media (min-width: 640px) {
-            .processos-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (min-width: 1024px) {
-            .processos-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
+        .processos-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 640px) { .processos-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .processos-grid { grid-template-columns: repeat(3, 1fr); } }
         
-        /* Progress bar */
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: #0073ea;
-            border-radius: 3px;
-            transition: width 0.3s ease;
-        }
+        .progress-bar { width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #0073ea; border-radius: 3px; transition: width 0.3s ease; }
         
         /* Status tags */
-        .status-tag-overdue {
-            background: #fb275d20;
-            color: #fb275d;
-            border-left: 3px solid #fb275d;
-        }
-        .status-tag-today {
-            background: #ffad0020;
-            color: #ffad00;
-            border-left: 3px solid #ffad00;
-        }
-        .status-tag-week {
-            background: #0073ea20;
-            color: #0073ea;
-            border-left: 3px solid #0073ea;
-        }
+        .status-tag-overdue { background: #fb275d20; color: #fb275d; border-left: 3px solid #fb275d; }
+        .status-tag-today { background: #ffad0020; color: #ffad00; border-left: 3px solid #ffad00; }
+        .status-tag-week { background: #0073ea20; color: #0073ea; border-left: 3px solid #0073ea; }
+        .priority-badge { font-size: 10px; padding: 4px 10px; border-radius: 20px; font-weight: 600; }
         
-        /* Prioridade badges */
-        .priority-badge {
-            font-size: 10px;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-        
-        /* Login modal */
+        /* Login Modal */
         .login-modal {
             position: fixed;
             inset: 0;
@@ -257,10 +132,7 @@
             width: 100%;
             max-width: 400px;
         }
-        .dark .login-box {
-            background: #181829;
-            border: 1px solid #2d2d3f;
-        }
+        .dark .login-box { background: #181829; border: 1px solid #2d2d3f; }
         
         .user-item {
             display: flex;
@@ -270,12 +142,8 @@
             cursor: pointer;
             border: 2px solid transparent;
             border-radius: 16px;
-            transition: all 0.2s;
         }
-        .user-item.selected {
-            border-color: #0073ea;
-            background: #e6f0ff;
-        }
+        .user-item.selected { border-color: #0073ea; background: #e6f0ff; }
         
         .current-user {
             display: flex;
@@ -286,30 +154,11 @@
             border-radius: 40px;
             cursor: pointer;
         }
-        .dark .current-user {
-            background: #1e1e2e;
-        }
+        .dark .current-user { background: #1e1e2e; }
         
-        .btn-primary {
-            background: #0073ea;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-weight: 600;
-            text-align: center;
-            min-height: 44px;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #e2e8f0;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-        }
-        .dark .btn-outline {
-            border-color: #2d2d3f;
-            color: #e2e8f0;
-        }
+        .btn-primary { background: #0073ea; color: white; padding: 12px 24px; border-radius: 40px; font-weight: 600; text-align: center; }
+        .btn-outline { background: transparent; border: 2px solid #e2e8f0; padding: 10px 20px; border-radius: 40px; font-weight: 600; }
+        .dark .btn-outline { border-color: #2d2d3f; color: #e2e8f0; }
         
         .resize-handle {
             position: absolute;
@@ -321,9 +170,7 @@
             background: transparent;
             z-index: 100;
         }
-        .resize-handle:hover {
-            background: #0073ea;
-        }
+        .resize-handle:hover { background: #0073ea; }
         
         /* Abas */
         .tab-btn {
@@ -337,15 +184,8 @@
             border: 1px solid #e2e8f0;
             transition: all 0.2s;
         }
-        .dark .tab-btn {
-            background: #1e293b;
-            border-color: #334155;
-        }
-        .tab-btn.active {
-            background: #0073ea;
-            color: white;
-            border-color: #0073ea;
-        }
+        .dark .tab-btn { background: #1e293b; border-color: #334155; }
+        .tab-btn.active { background: #0073ea; color: white; border-color: #0073ea; }
         
         /* Modal */
         .modal {
@@ -368,10 +208,7 @@
             overflow-y: auto;
             padding: 24px;
         }
-        .dark .modal-content {
-            background: #181829;
-            border: 1px solid #2d2d3f;
-        }
+        .dark .modal-content { background: #181829; border: 1px solid #2d2d3f; }
         
         .member-sidebar {
             position: fixed;
@@ -382,48 +219,19 @@
             height: 100vh;
             background: white;
             z-index: 99999;
-            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: right 0.3s;
             overflow-y: auto;
         }
-        .dark .member-sidebar {
-            background: #181829;
-            border-left: 1px solid #2d2d3f;
-        }
-        .member-sidebar.open {
-            right: 0;
-        }
-        .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 99998;
-            display: none;
-        }
-        .sidebar-overlay.open {
-            display: block;
-        }
+        .dark .member-sidebar { background: #181829; border-left: 1px solid #2d2d3f; }
+        .member-sidebar.open { right: 0; }
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99998; display: none; }
+        .sidebar-overlay.open { display: block; }
         
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-        }
-        .info-item {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 12px;
-        }
-        .dark .info-item {
-            background: #1e1e2e;
-        }
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 16px; }
+        .info-item { background: #f8fafc; padding: 12px; border-radius: 12px; }
+        .dark .info-item { background: #1e1e2e; }
         
-        .board-name {
-            word-break: break-word;
-            white-space: normal;
-            line-height: 1.3;
-        }
-        
+        .board-name { word-break: break-word; white-space: normal; line-height: 1.3; }
         .auto-save-indicator {
             position: fixed;
             bottom: 20px;
@@ -453,11 +261,11 @@
         </div>
     </div>
 
-    <!-- TOP NAVIGATION -->
+    <!-- HEADER -->
     <header class="bg-white dark:bg-[#181829] border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
         <div class="flex items-center justify-between px-4 py-3">
             <div class="flex items-center gap-3">
-                <button class="menu-toggle p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-2xl" onclick="toggleMobileSidebar()">☰</button>
+                <button class="menu-toggle p-2 rounded-full hover:bg-slate-100 text-2xl" onclick="toggleMobileSidebar()">☰</button>
                 <div class="flex items-center gap-2 cursor-pointer" onclick="changeView('home')">
                     <div class="w-8 h-8 bg-gradient-to-br from-monday-blue to-monday-purple rounded-xl flex items-center justify-center text-white font-bold shadow">P</div>
                     <span class="font-black text-lg tracking-tight">Gestão de <span class="text-monday-blue">Processos</span></span>
@@ -468,7 +276,7 @@
                     <div id="currentUserAvatar" class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm">?</div>
                     <span id="currentUserName" class="text-sm font-bold hidden sm:inline">Não logado</span>
                 </div>
-                <button onclick="toggleDarkMode()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-xl">🌓</button>
+                <button onclick="toggleDarkMode()" class="p-2 hover:bg-slate-100 rounded-full text-xl">🌓</button>
                 <div class="flex gap-2">
                     <button onclick="saveDatabaseFile()" class="text-[10px] font-bold p-2 bg-green-500 text-white rounded-md">💾 Salvar BD</button>
                     <button onclick="openDatabaseFile()" class="text-[10px] font-bold p-2 border rounded-md">📂 Abrir BD</button>
@@ -476,8 +284,8 @@
             </div>
         </div>
         <nav class="desktop-nav flex items-center gap-1 px-4 pb-2">
-            <button onclick="changeView('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-100" id="btn-home">🏠 Início</button>
-            <button onclick="changeView('usuarios')" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-100" id="btn-usuarios">👥 Usuários</button>
+            <button onclick="changeView('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-100">🏠 Início</button>
+            <button onclick="changeView('usuarios')" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-100">👥 Usuários</button>
         </nav>
     </header>
 
@@ -488,20 +296,15 @@
         <button onclick="openNewProcessModal()" class="bottom-nav-item bg-monday-blue text-white rounded-full w-12 h-12 flex items-center justify-center -mt-6 shadow-lg"><span class="text-2xl">+</span></button>
     </div>
 
-    <!-- MOBILE OVERLAY -->
     <div id="mobileOverlay" class="mobile-overlay" onclick="closeMobileSidebar()"></div>
 
-    <!-- MAIN CONTAINER -->
+    <!-- SIDEBAR -->
     <div class="resizable-container flex-1 overflow-hidden">
-        
-        <!-- SIDEBAR (sempre visível no desktop, colapsável no mobile) -->
         <aside id="sidebar" class="sidebar-resizable bg-white dark:bg-[#181829] border-r border-slate-200 dark:border-slate-800 flex flex-col p-4 overflow-y-auto custom-scroll">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Processos</h3>
                 <button onclick="openNewProcessModal()" class="text-monday-blue text-xl hover:scale-110">+</button>
             </div>
-            
-            <!-- Processos em Andamento -->
             <div class="mb-4">
                 <p class="text-xs font-bold text-slate-400 uppercase mb-2 flex items-center gap-2">
                     <span>⏳ Em Andamento</span>
@@ -509,10 +312,7 @@
                 </p>
                 <div id="sidebarAndamento" class="space-y-1 max-h-[300px] overflow-y-auto custom-scroll"></div>
             </div>
-            
             <div class="border-t border-slate-200 dark:border-slate-800 my-4"></div>
-            
-            <!-- Processos Concluídos -->
             <div class="mb-4">
                 <p class="text-xs font-bold text-slate-400 uppercase mb-2 flex items-center gap-2">
                     <span>✅ Concluídos</span>
@@ -520,17 +320,13 @@
                 </p>
                 <div id="sidebarConcluidos" class="space-y-1 max-h-[250px] overflow-y-auto custom-scroll"></div>
             </div>
-
-            <!-- Membros Ativos -->
             <div class="mt-auto border-t border-slate-200 dark:border-slate-800 pt-4">
                 <p class="text-xs font-bold text-slate-400 uppercase mb-4">Membros Ativos</p>
                 <div id="sidebarMembros" class="flex flex-wrap gap-2"></div>
             </div>
-            
             <div id="resizeHandle" class="resize-handle"></div>
         </aside>
 
-        <!-- MAIN CONTENT -->
         <main class="flex-1 overflow-y-auto pb-20 md:pb-6 custom-scroll" id="view-container"></main>
     </div>
 
@@ -554,8 +350,35 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR PROCESSO -->
+    <div id="editarProcessoModal" class="modal hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl font-black mb-6">✏️ Editar Processo</h2>
+            <input type="hidden" id="editProcessoId">
+            <div class="space-y-4">
+                <input type="text" id="editNumero" placeholder="Número do processo *" class="w-full p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent">
+                <input type="text" id="editTitulo" placeholder="Título / Assunto *" class="w-full p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent">
+                <input type="text" id="editRequerente" placeholder="Requerente *" class="w-full p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent">
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="block text-xs font-bold mb-1">Data de Chegada</label><input type="date" id="editDataChegada" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"></div>
+                    <div><label class="block text-xs font-bold mb-1">Origem</label><input type="text" id="editOrigem" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"></div>
+                </div>
+                <div><label class="block text-xs font-bold mb-1">Prioridade</label><select id="editPrioridade" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"><option value="baixa">Baixa</option><option value="media">Média</option><option value="alta">Alta</option><option value="urgente">🔴 Urgente</option></select></div>
+                <div id="editPrazoField" class="hidden"><label class="block text-xs font-bold mb-1">Prazo para resposta</label><input type="date" id="editPrazo" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"></div>
+                <textarea id="editObservacao" placeholder="Observação" rows="3" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"></textarea>
+                <div><label class="block text-xs font-bold mb-1">Status</label><select id="editStatus" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"><option value="andamento">⏳ Em Andamento</option><option value="despachado">✅ Concluído (Despachado)</option></select></div>
+                <div id="editDespachoField" class="hidden"><label class="block text-xs font-bold mb-1">Despachado para</label><input type="text" id="editDespachadoPara" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"></div>
+            </div>
+            <div class="flex gap-3 mt-6"><button onclick="salvarEdicaoProcesso()" class="flex-1 btn-primary py-3">Salvar Alterações</button><button onclick="closeEditarProcessoModal()" class="flex-1 btn-outline py-3">Cancelar</button></div>
+        </div>
+    </div>
+
     <div id="despachoModal" class="modal hidden">
         <div class="modal-content"><h2 class="text-2xl font-black mb-2">📤 Despachar Processo</h2><p id="despachoProcessoInfo" class="text-sm text-slate-500 mb-6"></p><div class="space-y-4"><div><label class="block text-sm font-bold mb-2">Encaminhar para</label><input type="text" id="despachoSetor" placeholder="Ex: Jurídico, Contabilidade..." class="w-full p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"></div><div><label class="block text-sm font-bold mb-2">Observação</label><textarea id="despachoObs" rows="3" class="w-full p-3 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"></textarea></div></div><div class="flex gap-3 mt-6"><button onclick="confirmarDespacho()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold">Confirmar</button><button onclick="closeDespachoModal()" class="flex-1 btn-outline py-3">Cancelar</button></div></div>
+    </div>
+
+    <div id="retornarModal" class="modal hidden">
+        <div class="modal-content"><h2 class="text-2xl font-black mb-2">🔄 Retornar Processo</h2><p id="retornarProcessoInfo" class="text-sm text-slate-500 mb-6"></p><p class="mb-6">Este processo voltará para a lista de "Em Andamento".</p><div class="flex gap-3"><button onclick="confirmarRetorno()" class="flex-1 bg-orange-600 text-white py-3 rounded-xl font-bold">Confirmar</button><button onclick="closeRetornarModal()" class="flex-1 btn-outline py-3">Cancelar</button></div></div>
     </div>
 
     <div id="usuarioModal" class="modal hidden">
@@ -845,7 +668,6 @@
                 </div>
             `;
             
-            // Configurar pesquisa com DEBOUNCE (não perde o foco)
             const searchInput = document.getElementById('searchInput');
             if (searchInput) {
                 searchInput.value = state.searchQuery;
@@ -935,6 +757,9 @@
                             <span class="text-[10px] font-bold text-slate-400">${dias} dias</span>
                             <span class="text-xs ${p.status === 'andamento' ? 'text-monday-blue' : 'text-green-600'}">${p.status === 'andamento' ? '⏳ Pendente' : '✅ Concluído'}</span>
                         </div>
+                        <div class="flex justify-end gap-2 mt-3">
+                            ${isAdmin() ? `<button onclick="editarProcesso(${p.id})" class="text-blue-500 text-xs hover:text-blue-700">✏️ Editar</button>` : ''}
+                        </div>
                     </div>
                 `;
             }).join('');
@@ -972,11 +797,124 @@
                         <h2 class="text-2xl font-black mb-4">${escapeHtml(p.titulo)}</h2>
                         <div class="grid grid-cols-2 gap-4 mb-6 text-sm"><div><p class="text-xs font-bold uppercase text-slate-400">Requerente</p><p class="font-semibold">${escapeHtml(p.requerente)}</p></div><div><p class="text-xs font-bold uppercase text-slate-400">Origem</p><p class="font-semibold">${p.origem}</p></div><div><p class="text-xs font-bold uppercase text-slate-400">Chegada</p><p class="font-semibold">${new Date(p.dataChegada).toLocaleDateString()}</p></div>${p.prazo ? `<div><p class="text-xs font-bold uppercase text-slate-400">Prazo</p><p class="font-semibold ${new Date(p.prazo) < new Date() ? 'text-red-500' : ''}">${new Date(p.prazo).toLocaleDateString()}</p></div>` : ''}${p.status === 'despachado' ? `<div><p class="text-xs font-bold uppercase text-slate-400">Despachado para</p><p class="font-semibold text-green-600">${p.despachadoPara}</p></div><div><p class="text-xs font-bold uppercase text-slate-400">Data</p><p class="font-semibold">${new Date(p.dataDespacho).toLocaleDateString()}</p></div>` : ''}</div>
                         <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl mb-6 border-l-4 border-monday-blue"><p class="font-bold text-sm mb-1">📌 Observação</p><p class="text-base">${escapeHtml(p.observacao) || 'Sem observação'}</p></div>
-                        <div class="flex flex-wrap gap-3">${p.status === 'andamento' ? `<button onclick="abrirDespacho(${p.id})" class="flex-1 bg-green-600 text-white py-3 rounded-full font-bold">📤 Despachar</button>` : (p.status === 'despachado' && isAdmin() ? `<button onclick="retornarProcesso(${p.id})" class="flex-1 bg-orange-600 text-white py-3 rounded-full font-bold">🔄 Retornar</button>` : '')}${isAdmin() ? `<button onclick="excluirProcesso(${p.id})" class="px-4 py-3 border-2 border-red-500 text-red-500 rounded-full font-bold">🗑️ Excluir</button>` : ''}</div>
+                        <div class="flex flex-wrap gap-3">
+                            ${p.status === 'andamento' ? `<button onclick="abrirDespacho(${p.id})" class="flex-1 bg-green-600 text-white py-3 rounded-full font-bold">📤 Despachar</button>` : (p.status === 'despachado' && isAdmin() ? `<button onclick="retornarProcesso(${p.id})" class="flex-1 bg-orange-600 text-white py-3 rounded-full font-bold">🔄 Retornar</button>` : '')}
+                            ${isAdmin() ? `<button onclick="editarProcesso(${p.id})" class="px-4 py-3 border-2 border-blue-500 text-blue-500 rounded-full font-bold">✏️ Editar</button>` : ''}
+                            ${isAdmin() ? `<button onclick="excluirProcesso(${p.id})" class="px-4 py-3 border-2 border-red-500 text-red-500 rounded-full font-bold">🗑️ Excluir</button>` : ''}
+                        </div>
                     </div>
                 </div>`;
             renderSidebar();
         }
+        
+        // ==================== FUNÇÃO DE EDITAR PROCESSO ====================
+        function editarProcesso(id) {
+            if (!isAdmin()) {
+                alert('Apenas administradores podem editar processos');
+                return;
+            }
+            const processo = state.processos.find(p => p.id === id);
+            if (!processo) return;
+            
+            document.getElementById('editProcessoId').value = processo.id;
+            document.getElementById('editNumero').value = processo.numero;
+            document.getElementById('editTitulo').value = processo.titulo;
+            document.getElementById('editRequerente').value = processo.requerente;
+            document.getElementById('editDataChegada').value = processo.dataChegada;
+            document.getElementById('editOrigem').value = processo.origem;
+            document.getElementById('editPrioridade').value = processo.prioridade;
+            document.getElementById('editPrazo').value = processo.prazo || '';
+            document.getElementById('editObservacao').value = processo.observacao || '';
+            document.getElementById('editStatus').value = processo.status;
+            
+            // Mostrar/esconder campo de prazo
+            const editPrazoField = document.getElementById('editPrazoField');
+            if (processo.prioridade === 'urgente') {
+                editPrazoField.classList.remove('hidden');
+            } else {
+                editPrazoField.classList.add('hidden');
+            }
+            
+            // Mostrar campo de despacho se status for despachado
+            const editDespachoField = document.getElementById('editDespachoField');
+            if (processo.status === 'despachado') {
+                editDespachoField.classList.remove('hidden');
+                document.getElementById('editDespachadoPara').value = processo.despachadoPara || '';
+            } else {
+                editDespachoField.classList.add('hidden');
+            }
+            
+            document.getElementById('editarProcessoModal').classList.remove('hidden');
+        }
+        
+        function closeEditarProcessoModal() {
+            document.getElementById('editarProcessoModal').classList.add('hidden');
+        }
+        
+        async function salvarEdicaoProcesso() {
+            const id = parseInt(document.getElementById('editProcessoId').value);
+            const processo = state.processos.find(p => p.id === id);
+            if (!processo) return;
+            
+            processo.numero = document.getElementById('editNumero').value.trim();
+            processo.titulo = document.getElementById('editTitulo').value.trim();
+            processo.requerente = document.getElementById('editRequerente').value.trim();
+            processo.dataChegada = document.getElementById('editDataChegada').value;
+            processo.origem = document.getElementById('editOrigem').value.trim() || 'Protocolo';
+            processo.prioridade = document.getElementById('editPrioridade').value;
+            processo.prazo = document.getElementById('editPrazo').value || null;
+            processo.observacao = document.getElementById('editObservacao').value.trim();
+            
+            const novoStatus = document.getElementById('editStatus').value;
+            
+            // Se mudou para despachado, adicionar informações de despacho
+            if (novoStatus === 'despachado' && processo.status !== 'despachado') {
+                processo.status = 'despachado';
+                processo.dataDespacho = new Date().toISOString().split('T')[0];
+                processo.despachadoPara = document.getElementById('editDespachadoPara').value.trim() || 'Não informado';
+            } 
+            // Se mudou para andamento, remover informações de despacho
+            else if (novoStatus === 'andamento' && processo.status !== 'andamento') {
+                processo.status = 'andamento';
+                processo.dataDespacho = null;
+                processo.despachadoPara = null;
+            }
+            // Se já era despachado e continua despachado, atualizar o setor
+            else if (novoStatus === 'despachado' && processo.status === 'despachado') {
+                processo.despachadoPara = document.getElementById('editDespachadoPara').value.trim() || processo.despachadoPara;
+            }
+            
+            // Validar urgente com prazo
+            if (processo.prioridade === 'urgente' && !processo.prazo) {
+                alert('Processos urgentes devem ter um prazo definido!');
+                return;
+            }
+            
+            await salvarProcesso(processo);
+            closeEditarProcessoModal();
+            renderHome();
+            showToast('✅ Processo atualizado com sucesso!');
+        }
+        
+        // Event listener para mostrar/esconder campo de despacho quando muda o status na edição
+        document.getElementById('editStatus')?.addEventListener('change', function(e) {
+            const despachoField = document.getElementById('editDespachoField');
+            if (e.target.value === 'despachado') {
+                despachoField.classList.remove('hidden');
+            } else {
+                despachoField.classList.add('hidden');
+            }
+        });
+        
+        // Event listener para mostrar/esconder campo de prazo quando muda a prioridade na edição
+        document.getElementById('editPrioridade')?.addEventListener('change', function(e) {
+            const prazoField = document.getElementById('editPrazoField');
+            if (e.target.value === 'urgente') {
+                prazoField.classList.remove('hidden');
+            } else {
+                prazoField.classList.add('hidden');
+            }
+        });
         
         function openNewProcessModal() { document.getElementById('newProcessModal').classList.remove('hidden'); }
         function closeNewProcessModal() { document.getElementById('newProcessModal').classList.add('hidden'); }
@@ -1006,9 +944,9 @@
         async function confirmarDespacho() { const p = state.processos.find(p => p.id === processoDespachoId); if (!p) return; const setor = document.getElementById('despachoSetor').value.trim(); if (!setor) { alert('Digite o setor de destino'); return; } p.status = 'despachado'; p.dataDespacho = new Date().toISOString().split('T')[0]; p.despachadoPara = setor; await salvarProcesso(p); renderHome(); closeDespachoModal(); showToast('✅ Processo despachado'); }
         
         let processoRetornoId = null;
-        function retornarProcesso(id) { if (!isAdmin()) { alert('Apenas administradores'); return; } const p = state.processos.find(p => p.id === id); if (!p) return; processoRetornoId = id; document.getElementById('retornarModal')?.classList.remove('hidden'); }
+        function retornarProcesso(id) { if (!isAdmin()) { alert('Apenas administradores'); return; } const p = state.processos.find(p => p.id === id); if (!p) return; processoRetornoId = id; document.getElementById('retornarProcessoInfo').textContent = `${p.numero} - ${p.titulo}`; document.getElementById('retornarModal').classList.remove('hidden'); }
+        function closeRetornarModal() { document.getElementById('retornarModal').classList.add('hidden'); }
         async function confirmarRetorno() { const p = state.processos.find(p => p.id === processoRetornoId); if (!p) return; p.status = 'andamento'; p.dataDespacho = null; p.despachadoPara = null; await salvarProcesso(p); renderHome(); closeRetornarModal(); showToast('✅ Processo retornado'); }
-        function closeRetornarModal() { document.getElementById('retornarModal')?.classList.add('hidden'); }
         
         async function excluirProcesso(id) { if (!isAdmin()) { alert('Apenas administradores'); return; } if (!confirm('Excluir processo?')) return; state.processos = state.processos.filter(p => p.id !== id); await deletarProcesso(id); renderHome(); renderSidebar(); showToast('✅ Processo excluído'); }
         

@@ -7,6 +7,29 @@
     <title>Gestão de Processos - Secretaria</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        // Configuração do Tailwind para dark mode
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Figtree', 'sans-serif'] },
+                    colors: {
+                        monday: {
+                            blue: '#0073ea',
+                            green: '#00ca72',
+                            red: '#fb275d',
+                            orange: '#ffad00',
+                            purple: '#a25ddc',
+                            gray: '#c4c4c4',
+                            bg: '#f5f6f8',
+                            dark: '#111122'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         /* Custom Scroll */
         .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -82,6 +105,7 @@
         }
         .dark .bottom-nav-item { color: #94a3b8; }
         .bottom-nav-item.active { background: #e6f0ff; color: #0073ea; }
+        .dark .bottom-nav-item.active { background: #1e293b; color: #60a5fa; }
         .bottom-nav-item span:first-child { font-size: 22px; }
         .bottom-nav-item span:last-child { font-size: 10px; font-weight: 600; }
         
@@ -144,6 +168,7 @@
             border-radius: 16px;
         }
         .user-item.selected { border-color: #0073ea; background: #e6f0ff; }
+        .dark .user-item.selected { background: #1e293b; }
         
         .current-user {
             display: flex;
@@ -156,7 +181,9 @@
         }
         .dark .current-user { background: #1e1e2e; }
         
-        .btn-primary { background: #0073ea; color: white; padding: 12px 24px; border-radius: 40px; font-weight: 600; text-align: center; }
+        .btn-primary { background: #0073ea; color: white; padding: 12px 24px; border-radius: 40px; font-weight: 600; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .btn-primary:hover { background: #005bb5; transform: translateY(-2px); }
+        .btn-primary:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
         .btn-outline { background: transparent; border: 2px solid #e2e8f0; padding: 10px 20px; border-radius: 40px; font-weight: 600; }
         .dark .btn-outline { border-color: #2d2d3f; color: #e2e8f0; }
         
@@ -265,7 +292,7 @@
     <header class="bg-white dark:bg-[#181829] border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
         <div class="flex items-center justify-between px-4 py-3">
             <div class="flex items-center gap-3">
-                <button class="menu-toggle p-2 rounded-full hover:bg-slate-100 text-2xl" onclick="toggleMobileSidebar()">☰</button>
+                <button class="menu-toggle p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-2xl" onclick="toggleMobileSidebar()">☰</button>
                 <div class="flex items-center gap-2 cursor-pointer" onclick="changeView('home')">
                     <div class="w-8 h-8 bg-gradient-to-br from-monday-blue to-monday-purple rounded-xl flex items-center justify-center text-white font-bold shadow">P</div>
                     <span class="font-black text-lg tracking-tight">Gestão de <span class="text-monday-blue">Processos</span></span>
@@ -276,16 +303,16 @@
                     <div id="currentUserAvatar" class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm">?</div>
                     <span id="currentUserName" class="text-sm font-bold hidden sm:inline">Não logado</span>
                 </div>
-                <button onclick="toggleDarkMode()" class="p-2 hover:bg-slate-100 rounded-full text-xl">🌓</button>
+                <button onclick="toggleDarkMode()" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-xl">🌓</button>
                 <div class="flex gap-2">
-                    <button onclick="saveDatabaseFile()" class="text-[10px] font-bold p-2 bg-green-500 text-white rounded-md">💾 Salvar BD</button>
-                    <button onclick="openDatabaseFile()" class="text-[10px] font-bold p-2 border rounded-md">📂 Abrir BD</button>
+                    <button onclick="saveDatabaseFile()" class="text-[10px] font-bold p-2 bg-green-500 text-white rounded-md hover:brightness-110">💾 Salvar BD</button>
+                    <button onclick="openDatabaseFile()" class="text-[10px] font-bold p-2 border border-slate-200 dark:border-slate-700 rounded-md hover:bg-slate-50">📂 Abrir BD</button>
                 </div>
             </div>
         </div>
         <nav class="desktop-nav flex items-center gap-1 px-4 pb-2">
-            <button onclick="changeView('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-100">🏠 Início</button>
-            <button onclick="changeView('usuarios')" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-100">👥 Usuários</button>
+            <button onclick="changeView('home')" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800">🏠 Início</button>
+            <button onclick="changeView('usuarios')" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold hover:bg-slate-100 dark:hover:bg-slate-800">👥 Usuários</button>
         </nav>
     </header>
 
@@ -389,7 +416,7 @@
         <div class="modal-content"><h2 class="text-2xl font-black mb-6">🔑 Alterar Senha</h2><div class="space-y-4"><input type="password" id="senhaAtual" placeholder="Senha atual" class="w-full p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"><input type="password" id="senhaNova" placeholder="Nova senha" class="w-full p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"><input type="password" id="senhaConfirmar" placeholder="Confirmar" class="w-full p-4 border-2 border-slate-200 dark:border-slate-700 rounded-xl bg-transparent"></div><div class="flex gap-3 mt-6"><button onclick="alterarSenha()" class="flex-1 btn-primary py-3">Alterar</button><button onclick="closeSenhaModal()" class="flex-1 btn-outline py-3">Cancelar</button></div></div>
     </div>
 
-    <div id="userMenu" class="hidden absolute right-4 top-14 bg-white dark:bg-[#181829] border rounded-xl shadow-lg z-50 w-40"><button onclick="openPasswordModal()" class="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 rounded-lg">🔑 Alterar Senha</button><button onclick="logout()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 rounded-lg">🚪 Sair</button></div>
+    <div id="userMenu" class="hidden absolute right-4 top-14 bg-white dark:bg-[#181829] border rounded-xl shadow-lg z-50 w-40"><button onclick="openPasswordModal()" class="w-full text-left px-4 py-3 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg">🔑 Alterar Senha</button><button onclick="logout()" class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">🚪 Sair</button></div>
     <div id="memberSidebarOverlay" class="sidebar-overlay" onclick="closeMemberSidebar()"></div>
     <div id="memberSidebar" class="member-sidebar"><div class="p-6 border-b"><div class="flex items-center gap-3"><div id="sidebarMemberAvatar" class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"></div><div><h3 id="sidebarMemberName" class="font-black text-lg"></h3><p id="sidebarMemberRole" class="text-xs text-slate-400"></p></div><button onclick="closeMemberSidebar()" class="ml-auto text-2xl">&times;</button></div><div id="sidebarMemberInfo" class="info-grid mt-4"></div></div><div class="p-6" id="memberSidebarContent"></div></div>
     <div id="toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-2xl opacity-0 transition-all duration-300 z-[9999]">Alterações salvas!</div>
@@ -491,7 +518,15 @@
                 </div>
             `).join('');
         }
-        function selectUser(id) { state.selectedUserId = id; document.getElementById('loginPassword').disabled = false; document.getElementById('loginButton').disabled = false; renderUserList(); }
+        function selectUser(id) { 
+            state.selectedUserId = id; 
+            const passwordInput = document.getElementById('loginPassword');
+            const loginButton = document.getElementById('loginButton');
+            passwordInput.disabled = false;
+            passwordInput.focus();
+            loginButton.disabled = false;
+            renderUserList(); 
+        }
         function handleLogin() {
             const pwd = document.getElementById('loginPassword').value;
             const user = state.usuarios.find(u => u.id === state.selectedUserId);
@@ -501,6 +536,17 @@
                 else { completeLogin(user); }
             } else { alert('Senha incorreta'); }
         }
+        
+        // ADICIONAR EVENTO DE TECLA ENTER NO CAMPO DE SENHA
+        document.getElementById('loginPassword')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (!this.disabled) {
+                    handleLogin();
+                }
+            }
+        });
+        
         function completeLogin(user) {
             state.currentUser = user;
             document.getElementById('currentUserAvatar').style.background = user.cor;
@@ -827,7 +873,6 @@
             document.getElementById('editObservacao').value = processo.observacao || '';
             document.getElementById('editStatus').value = processo.status;
             
-            // Mostrar/esconder campo de prazo
             const editPrazoField = document.getElementById('editPrazoField');
             if (processo.prioridade === 'urgente') {
                 editPrazoField.classList.remove('hidden');
@@ -835,7 +880,6 @@
                 editPrazoField.classList.add('hidden');
             }
             
-            // Mostrar campo de despacho se status for despachado
             const editDespachoField = document.getElementById('editDespachoField');
             if (processo.status === 'despachado') {
                 editDespachoField.classList.remove('hidden');
@@ -867,24 +911,20 @@
             
             const novoStatus = document.getElementById('editStatus').value;
             
-            // Se mudou para despachado, adicionar informações de despacho
             if (novoStatus === 'despachado' && processo.status !== 'despachado') {
                 processo.status = 'despachado';
                 processo.dataDespacho = new Date().toISOString().split('T')[0];
                 processo.despachadoPara = document.getElementById('editDespachadoPara').value.trim() || 'Não informado';
             } 
-            // Se mudou para andamento, remover informações de despacho
             else if (novoStatus === 'andamento' && processo.status !== 'andamento') {
                 processo.status = 'andamento';
                 processo.dataDespacho = null;
                 processo.despachadoPara = null;
             }
-            // Se já era despachado e continua despachado, atualizar o setor
             else if (novoStatus === 'despachado' && processo.status === 'despachado') {
                 processo.despachadoPara = document.getElementById('editDespachadoPara').value.trim() || processo.despachadoPara;
             }
             
-            // Validar urgente com prazo
             if (processo.prioridade === 'urgente' && !processo.prazo) {
                 alert('Processos urgentes devem ter um prazo definido!');
                 return;
@@ -896,7 +936,7 @@
             showToast('✅ Processo atualizado com sucesso!');
         }
         
-        // Event listener para mostrar/esconder campo de despacho quando muda o status na edição
+        // Event listeners para os selects no modal de edição
         document.getElementById('editStatus')?.addEventListener('change', function(e) {
             const despachoField = document.getElementById('editDespachoField');
             if (e.target.value === 'despachado') {
@@ -906,7 +946,6 @@
             }
         });
         
-        // Event listener para mostrar/esconder campo de prazo quando muda a prioridade na edição
         document.getElementById('editPrioridade')?.addEventListener('change', function(e) {
             const prazoField = document.getElementById('editPrazoField');
             if (e.target.value === 'urgente') {
@@ -957,10 +996,25 @@
         function closeMobileSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('mobileOverlay').classList.remove('open'); }
         
         function changeView(view) { state.activeView = view; render(); }
-        function toggleDarkMode() { state.darkMode = !state.darkMode; document.documentElement.classList.toggle('dark'); }
+        function toggleDarkMode() { 
+            state.darkMode = !state.darkMode; 
+            document.documentElement.classList.toggle('dark');
+            // Salvar preferência
+            localStorage.setItem('darkMode', state.darkMode);
+        }
         
         // ==================== INICIALIZAÇÃO ====================
         window.onload = async () => {
+            // Carregar preferência de tema escuro
+            const savedDarkMode = localStorage.getItem('darkMode');
+            if (savedDarkMode === 'true') {
+                state.darkMode = true;
+                document.documentElement.classList.add('dark');
+            } else if (savedDarkMode === 'false') {
+                state.darkMode = false;
+                document.documentElement.classList.remove('dark');
+            }
+            
             await carregarDadosMongo();
             if (state.usuarios.length === 0) {
                 state.usuarios = [
@@ -968,7 +1022,6 @@
                     { id: 2, nome: 'Maria Julia', username: 'maria', senha: btoa('123456'), tipo: 'admin', cor: '#ffad00' }
                 ];
             }
-            if (state.darkMode) document.documentElement.classList.add('dark');
             renderUserList();
             document.getElementById('loginModal').style.display = 'flex';
             if (state.currentUser) { document.getElementById('loginModal').style.display = 'none'; render(); renderSidebar(); }
